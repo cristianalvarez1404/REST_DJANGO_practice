@@ -1,0 +1,22 @@
+GET http://127.0.0.1:8000/advocates/
+
+###
+POST http://127.0.0.1:8000/advocates/
+Content-Type: application/json
+
+{
+  "username":"cristian",
+  "bio":"hello world!"
+}
+
+###
+PUT http://127.0.0.1:8000/advocates/test3/
+Content-Type: application/json
+
+{
+  "username":"cristian100%",
+  "bio":"hello world 100%!"
+}
+
+###
+DELETE http://127.0.0.1:8000/advocates/test/
