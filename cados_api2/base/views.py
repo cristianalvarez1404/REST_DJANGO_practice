@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from .models import Advocate
 from .serializers import AdvocateSerializer
 from django.db.models import Q
+from rest_framework.views import APIView
+from rest_framework import status
 
 # GET /advocates
 # POST /advocates
@@ -50,22 +52,46 @@ def add_advocate(request):
   )
   return Response('added')
 
-@api_view(["GET","PUT","DELETE"])
-def advocate_detail(request,username):
-  advocate = Advocate.objects.get(username=username)
+# @api_view(["GET","PUT","DELETE"])
+# def advocate_detail(request,username):
+  # advocate = Advocate.objects.get(username=username)
   
-  if request.method == "GET":
+  # if request.method == "GET":
+  #   serializer = AdvocateSerializer(advocate,many=False)
+  #   return Response(serializer.data)
+  
+  # if request.method == "PUT":
+  #   advocate.username = request.data["username"]
+  #   advocate.bio = request.data["bio"]
+  #   advocate.save()
+  #   serializer = AdvocateSerializer(advocate,many=False)
+  #   return Response(serializer.data)
+  # if request.method == "DELETE":
+  #   advocate.delete()
+  #   return Response({"message":"deleted"})
+  
+class AdvocateDetail(APIView):
+  def get_object(self,request,username):
+    try:
+      return Advocate.objects.get(username=username)
+    except Advocate.DoesNotExist:
+      raise status.HTTP_404_NOT_FOUND
+    
+  def get(self, request, username):
+    advocate = self.get_object(self,username=username)
     serializer = AdvocateSerializer(advocate,many=False)
     return Response(serializer.data)
   
-  if request.method == "PUT":
+  def put(self,request,username):
+    advocate = self.get_object(self,username=username)
     advocate.username = request.data["username"]
     advocate.bio = request.data["bio"]
     advocate.save()
-
-    serializer = AdvocateSerializer(advocate,many=False)
+    serializer = AdvocateSerializer(advocate, many=False)
     return Response(serializer.data)
-
-  if request.method == "DELETE":
+  
+  def delete(self,request,username):
+    advocate = self.get_object(self,username=username)
     advocate.delete()
-    return Response({"message":"deleted"})
+    
+    return Response({"message":"Advocate deleted!"})
